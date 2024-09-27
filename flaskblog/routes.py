@@ -58,32 +58,6 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 
-@app.route("/logiin", methods=['GET', 'POST'])
-def logiin():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password, form.password.data):
-            name = Recognizer()
-            if len(name)==0:
-                    login_user(user, remember=form.remember.data)
-                    next_page = request.args.get('next')
-                    flash('Login Successful, Your Face was Successfully Verified.', 'success')
-                    return redirect(next_page) if next_page else redirect(url_for('home'))
-            else:
-                if user.image_file == name[0]:
-                    login_user(user, remember=form.remember.data)
-                    next_page = request.args.get('next')
-                    flash('Login Successful, Your Face was Successfully Verified.', 'success')
-                    return redirect(next_page) if next_page else redirect(url_for('home'))
-                else:
-                    flash('Login Unsuccessful. User Face Not Found.', 'danger')
-        else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
-    return render_template('logiin.html', title='Login', form=form)
-
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
